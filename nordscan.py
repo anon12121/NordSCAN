@@ -38,23 +38,23 @@ def check_directory_traversal(url):
     for payload in payloads:
         test_url = url + payload
         try:
-            response = requests.get(test_url)
+            response = requests.get(test_url, timeout=5)
             if response.status_code == 200 and "root" in response.text.lower():
                 print(f"[!] Potential directory traversal vulnerability found: {test_url}")
-        except Exception as e:
+        except requests.exceptions.RequestException as e:
             print(f"[-] Error testing directory traversal: {e}")
 
 # Function to check for outdated software versions
 def check_outdated_software(url):
     print(f"[+] Checking for outdated software versions on {url}...")
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)
         soup = BeautifulSoup(response.text, 'html.parser')
         meta_tags = soup.find_all('meta')
         for tag in meta_tags:
             if 'generator' in tag.get('name', '').lower():
                 print(f"[+] Software version detected: {tag.get('content')}")
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
         print(f"[-] Error checking software versions: {e}")
 
 # Main function
